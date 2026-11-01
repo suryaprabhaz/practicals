@@ -69,7 +69,7 @@ def chat():
                 continue
             def stream(resp=upstream):
                 try:
-                    for chunk in resp.iter_content(1024):
+                    for chunk in resp.iter_content(1):
                         if chunk: yield chunk
                 finally: resp.close()
             return Response(stream_with_context(stream()),content_type=upstream.headers.get("Content-Type","text/event-stream"),headers={"Cache-Control":"no-cache, no-transform","X-AI-Provider":provider,"X-Accel-Buffering":"no"})
