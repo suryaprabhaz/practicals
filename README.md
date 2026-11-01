@@ -1,46 +1,56 @@
 # Practicals AI
 
-A lightweight coding assistant with:
-- Gemini streaming responses (bring your own API key)
-- Local chat history using browser localStorage
-- Mobile-friendly interface
-- Offline shell caching and a small built-in programming reference library
-- GitHub Pages deployment through GitHub Actions
+**Live website:** [https://suryaprabhaz.github.io/practicals/](https://suryaprabhaz.github.io/practicals/)
 
-## Important: online AI vs offline mode
+A minimal, monochrome coding assistant with a calm, Claude-inspired interface.
 
-Gemini is a cloud API and requires an internet connection. The app shell and built-in programming notes are cached for offline use, but an actual generative AI model does not run offline in this project. Full offline inference would require bundling/downloading a browser-compatible local model (for example WebLLM), which is a separate, substantially larger setup.
+## Features
+
+- Gemini 3.8 Flash by default, using Google's Interactions API
+- Streaming responses for coding questions, debugging and explanations
+- Bring your own Gemini API key (BYOK)
+- Local chat history stored in the current browser
+- Responsive desktop and mobile interface
+- Offline app shell and a small built-in programming reference library
+- Automatic GitHub Pages deployment on pushes to `main`
+
+## Online AI and offline mode
+
+Gemini is a cloud API and requires an internet connection. The app shell and built-in programming notes can be used offline, but this project does **not** run a generative AI model locally. Full offline inference would require bundling a browser-compatible local model, which is a separate and substantially larger setup.
 
 ## Configure Gemini
 
-1. Open the deployed website.
-2. Click **API settings**.
-3. Create a fresh key in Google AI Studio and paste it into the browser.
-4. Select the available Gemini model and save.
+1. Open the [live website](https://suryaprabhaz.github.io/practicals/).
+2. Open **API settings**.
+3. Create a fresh API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
+4. Paste the key into the website and select **Gemini 3.8 Flash**.
+5. Save the settings and start a conversation.
 
-The key is stored in that browser's localStorage and sent directly from the browser to Google. It is never committed to this repository. This is a personal bring-your-own-key design, not suitable for distributing a shared API key. Anyone with access to that browser profile can use its stored key, and the key is visible in browser network requests.
+The key is stored in that browser's localStorage and sent directly from the browser to Google through the Gemini Interactions API. It is not committed to this repository. This client-side BYOK setup is intended for personal use, not for distributing a shared API key: anyone with access to that browser profile can use the stored key, and browser network requests expose it.
 
-**Do not reuse a key pasted into chat or committed to source control. Revoke exposed keys and rotate them.**
+**Never publish an API key in source code or reuse a key pasted into a chat. Revoke exposed keys and rotate them.**
 
-## Deploy
+## Deployment
 
-The workflow in `.github/workflows/pages.yml` deploys the repository root to GitHub Pages on every push to `main`. The repository Pages source should be set to **GitHub Actions**.
+GitHub Actions deploys the repository root to GitHub Pages whenever code is pushed to `main`.
 
-For a private repository, GitHub Pages availability depends on your GitHub plan. In repository Settings → Pages, select **GitHub Actions** as the build and deployment source if required. Pages websites are publicly accessible even when the source repository is private.
+- **Live URL:** https://suryaprabhaz.github.io/practicals/
+- **Repository:** https://github.com/suryaprabhaz/practicals
+- **Deployment workflow:** [GitHub Actions](https://github.com/suryaprabhaz/practicals/actions/workflows/pages.yml)
+- **Pages source:** GitHub Actions
 
-Expected project site URL:
-`https://suryaprabhaz.github.io/practicals/`
+Pages websites are publicly accessible even when their source repository is private. Availability for private repositories depends on the GitHub plan.
 
 ## Local preview
 
-From this directory, run:
+Run from the repository root:
 
 ```bash
 python -m http.server 8000
 ```
 
-Then open `http://localhost:8000`.
+Then open http://localhost:8000.
 
-## Data
+## Data and privacy
 
-Chats and the optional API key are stored locally in the current browser profile. They are not synchronized between devices.
+Chats and the optional API key are stored locally in the current browser profile. They are not synchronized between devices. The API key is sent to Google's Gemini API when you request a response.
