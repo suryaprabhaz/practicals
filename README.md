@@ -2,11 +2,12 @@
 
 **Live site:** https://suryaprabhaz.github.io/practicals/
 
-A responsive, monochrome coding assistant with Gemini streaming and a built-in offline programming reference library.
+A responsive, monochrome coding assistant with Gemini and Groq streaming and a built-in offline programming reference library.
 
 ## Features
 
-- Gemini Flash streaming through the Gemini API
+- Provider switcher for Google Gemini and Groq
+- Streaming responses from both providers with separate API keys and model settings
 - Concise coding-first answers and reduced conversation context for faster requests
 - Stop-safe streaming UI and visible errors
 - Local chat history and settings per browser/device
@@ -41,18 +42,18 @@ Important:
 - Keep the Python server running and the host computer awake. The other device is loading the site from that computer.
 - Allow Python through the host computer's firewall on **Private networks** if prompted. Do not expose port 8000 to public networks/the internet.
 - The offline reference library, interface and local chat history work without internet once the page is served on your LAN.
-- The Gemini API is cloud-hosted. AI-generated answers still require internet access and a Gemini API key.
-- Each device/browser has its own local storage. Enter the Gemini key separately on each device if you want online AI there.
+- Gemini and Groq are cloud-hosted. AI-generated answers still require internet access and a key for the selected provider.
+- Each device/browser has its own local storage. Enter the relevant Gemini or Groq key separately on each device if you want online AI there.
 - On plain HTTP LAN addresses, browsers generally do not allow service workers because the origin is not secure. The site still works while the Python server is reachable; don't expect offline access after the host server is stopped.
 
-## Gemini setup
+## API provider setup
 
-1. Open **API settings**.
-2. Create a key in [Google AI Studio](https://aistudio.google.com/app/apikey).
-3. Paste it into the browser and save.
-4. Online AI requests use Gemini 3.8 Flash through the streaming `generateContent` endpoint.
+1. Open **API settings** and choose **Google Gemini** or **Groq**.
+2. For Gemini, create a key in [Google AI Studio](https://aistudio.google.com/app/apikey). The default model is `gemini-3.8-flash`.
+3. For Groq, create a key in [Groq Console](https://console.groq.com/keys). The default model is `llama-3.3-70b-versatile`; you can change the model ID in settings if your account supports another model.
+4. Paste the selected provider's key and save. The keys are stored separately, so switching providers does not overwrite the other key.
 
-The key is stored in that browser's localStorage and sent directly to Google. It is not committed to this repository. This BYOK browser setup is for personal use, not a secure shared-key deployment. Anyone with access to that browser profile can use the stored key, and browser network requests expose it. Never embed a shared API key in a public static website.
+Gemini uses the Interactions streaming API. Groq uses its OpenAI-compatible streaming Chat Completions endpoint. Keys are stored in that browser's localStorage and sent directly to the selected provider. They are not committed to this repository. This BYOK browser setup is for personal use, not a secure shared-key deployment. Anyone with access to that browser profile can use the stored keys, and browser network requests expose them. Never embed a shared API key in a public static website.
 
 ## Offline AI limitation
 
@@ -76,4 +77,4 @@ Then open http://localhost:8000.
 
 ## Privacy
 
-Chats and the optional API key are stored in the current browser profile only. They are not synchronized between devices. Gemini receives your prompts and conversation context when you use online AI.
+Chats and the optional API key are stored in the current browser profile only. They are not synchronized between devices. The selected provider (Gemini or Groq) receives your prompts and recent conversation context when you use online AI.
