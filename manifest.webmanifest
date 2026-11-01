@@ -1,0 +1,11 @@
+{
+  "name": "Practicals AI - Coding Companion",
+  "short_name": "Practicals AI",
+  "description": "A coding assistant with Gemini streaming and offline programming references.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0d12",
+  "theme_color": "#0b0d12",
+  "icons": []
+}
