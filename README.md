@@ -1,80 +1,91 @@
 # Practicals AI
 
-**Live site:** https://suryaprabhaz.github.io/practicals/
+A responsive coding assistant with a Python LAN backend, server-side Gemini/Groq API keys, streaming responses, local chat history, and offline programming references.
 
-A responsive, monochrome coding assistant with Gemini and Groq streaming and a built-in offline programming reference library.
+## Run on your laptop and access it from another device on the same Wi-Fi
 
-## Features
+**For this version, run Flask with `python server.py`, not `python -m http.server`.** The Flask app serves both the frontend and AI API on port 8000.
 
-- Provider switcher for Google Gemini and Groq
-- Streaming responses from both providers with separate API keys and model settings
-- Concise coding-first answers and reduced conversation context for faster requests
-- Stop-safe streaming UI and visible errors
-- Local chat history and settings per browser/device
-- Offline reference answers for common DSA, Python, Java, C, SQL, networking and CS topics
-- Responsive desktop and mobile UI
-- GitHub Pages auto-deployment on pushes to `main`
-
-## Run on your Wi-Fi / LAN (including without internet)
-
-Run this on the computer that will host the site:
+### 1. Get the latest repository
 
 ```bash
-python -m http.server 8000 --bind 0.0.0.0
+git clone https://github.com/suryaprabhaz/practicals.git
+cd practicals
 ```
 
-Find that computer's local IPv4 address:
+If you already cloned it, run `git pull`.
 
-- Windows: run `ipconfig` and look for **IPv4 Address** under the active Wi-Fi adapter.
-- Linux: run `hostname -I`.
-- macOS: run `ipconfig getifaddr en0` (Wi-Fi; interface may differ).
+### 2. Install dependencies (Windows)
 
-On another phone, tablet or computer connected to the **same Wi-Fi network**, open:
+```cmd
+py -m venv .venv
+.venv\Scripts\activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+copy .env.example .env
+```
+
+Open `.env` in Notepad and add your keys on the host laptop:
+
+- `GEMINI_API_KEY` — Google AI Studio API key
+- `GROQ_API_KEY` — Groq Console API key
+
+Configure either one or both. The real `.env` is ignored by Git and must never be committed. The repository contains only the empty `.env.example` template.
+
+### 3. Start the backend and frontend together
+
+```cmd
+python server.py
+```
+
+Or double-click `run.bat` on Windows.
+
+The server listens on `0.0.0.0:8000`. Keep this terminal open.
+
+### 4. Open Practicals AI from the other laptop
+
+On the host laptop, run `ipconfig` and find **IPv4 Address** under the active **Wireless LAN adapter Wi-Fi**.
+
+For example, if the host laptop IP is `192.168.1.20`, open this on the second laptop:
 
 ```text
-http://HOST-COMPUTER-IP:8000
+http://192.168.1.20:8000
 ```
 
-For example, if the host computer's IP is `192.168.1.20`, open `http://192.168.1.20:8000`.
+Replace the example IP with the host laptop's actual IPv4 address. Both laptops must be on the same reachable Wi-Fi network. Guest Wi-Fi or router client isolation may block connections between devices.
 
-Important:
+### 5. Keep it running
 
-- Keep the Python server running and the host computer awake. The other device is loading the site from that computer.
-- Allow Python through the host computer's firewall on **Private networks** if prompted. Do not expose port 8000 to public networks/the internet.
-- The offline reference library, interface and local chat history work without internet once the page is served on your LAN.
-- Gemini and Groq are cloud-hosted. AI-generated answers still require internet access and a key for the selected provider.
-- Each device/browser has its own local storage. Enter the relevant Gemini or Groq key separately on each device if you want online AI there.
-- On plain HTTP LAN addresses, browsers generally do not allow service workers because the origin is not secure. The site still works while the Python server is reachable; don't expect offline access after the host server is stopped.
+- Keep the host laptop powered on, awake, and connected to Wi-Fi.
+- Keep `python server.py` running; closing the terminal stops the site and API.
+- Allow Python through Windows Defender Firewall on **Private networks** when prompted. If needed, add an inbound TCP rule for port 8000 restricted to the Private profile.
+- Do not port-forward port 8000 or expose this development server to the public internet.
+- Both laptops use the API keys configured on the host laptop. The browser never receives the keys.
+- Chat history and provider selection are stored separately in each browser.
+- The host laptop needs internet access for Gemini/Groq requests.
 
-## API provider setup
+## Provider selection and fallback
 
-1. Open **API settings** and choose **Google Gemini** or **Groq**.
-2. For Gemini, create a key in [Google AI Studio](https://aistudio.google.com/app/apikey). The default model is `gemini-3.8-flash`.
-3. For Groq, create a key in [Groq Console](https://console.groq.com/keys). The default model is `llama-3.3-70b-versatile`; you can change the model ID in settings if your account supports another model.
-4. Paste the selected provider's key and save. The keys are stored separately, so switching providers does not overwrite the other key.
+Use the provider selector in the app to choose Gemini or Groq. The backend tries the selected provider first and then the other configured provider if the upstream request fails before streaming begins. Groq also tries the configured model followed by `openai/gpt-oss-20b`.
 
-Gemini uses the Interactions streaming API. Groq uses its OpenAI-compatible streaming Chat Completions endpoint. Keys are stored in that browser's localStorage and sent directly to the selected provider. They are not committed to this repository. This BYOK browser setup is for personal use, not a secure shared-key deployment. Anyone with access to that browser profile can use the stored keys, and browser network requests expose them. Never embed a shared API key in a public static website.
+Optional model overrides can be set in the host laptop's local `.env`:
 
-## Offline AI limitation
+- `GEMINI_MODEL` (default: `gemini-3.8-flash`)
+- `GROQ_MODEL` (default: `openai/gpt-oss-120b`)
 
-This repository does **not** contain a local generative AI model. Offline mode searches its built-in programming notes and returns matching reference material; it cannot answer arbitrary new questions like Gemini. Running a real model offline requires downloading and hosting a compatible model (for example, a quantized WebLLM model), sufficient device RAM/storage, and additional setup.
+Check backend configuration at `http://HOST-IP:8000/api/status`. It reports whether provider keys are configured, never their values.
 
-## Deployment
+## Troubleshooting
 
-GitHub Actions deploys the repository root to GitHub Pages on every push to `main`.
+- **Page does not open:** verify same Wi-Fi, use the host laptop's current IPv4 from `ipconfig`, keep the server terminal open, and allow Python through the Private firewall profile.
+- **AI says no keys configured:** verify the spelling in `.env`, save it, and restart `python server.py`.
+- **IP address changed:** run `ipconfig` again; your router may assign a new local IP.
+- **Port 8000 is occupied:** set `PORT=8001` in `.env` and open `http://HOST-IP:8001`.
 
-- Repository: https://github.com/suryaprabhaz/practicals
-- Workflow: https://github.com/suryaprabhaz/practicals/actions/workflows/pages.yml
-- Live site: https://suryaprabhaz.github.io/practicals/
+## Security
 
-## Local preview
+This is intended for a trusted private LAN only. Anyone who can reach the app on that LAN may be able to submit AI requests using the host's configured API keys and incur usage charges. Do not use it on public/shared Wi-Fi. For internet-facing use, add authentication, rate limiting, HTTPS, and a production WSGI server.
 
-```bash
-python -m http.server 8000
-```
+## GitHub Pages
 
-Then open http://localhost:8000.
-
-## Privacy
-
-Chats and the optional API key are stored in the current browser profile only. They are not synchronized between devices. The selected provider (Gemini or Groq) receives your prompts and recent conversation context when you use online AI.
+GitHub Pages can publish the static frontend but cannot run Flask or the Python API. The LAN workflow above requires running `python server.py` on the host laptop.
