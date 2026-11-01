@@ -24,7 +24,7 @@ The key is stored in that browser's localStorage and sent directly from the brow
 
 ## Deploy
 
-The workflow in `.github/workflows/pages.yml` deploys the repository root to GitHub Pages on every push to `main`.
+The workflow in `.github/workflows/pages.yml` deploys the repository root to GitHub Pages on every push to `main`. The repository Pages source should be set to **GitHub Actions**.
 
 For a private repository, GitHub Pages availability depends on your GitHub plan. In repository Settings → Pages, select **GitHub Actions** as the build and deployment source if required. Pages websites are publicly accessible even when the source repository is private.
 
